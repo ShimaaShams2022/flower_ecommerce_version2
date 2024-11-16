@@ -8,10 +8,10 @@ part of 'verify_request.dart';
 
 VerifyRequest _$VerifyRequestFromJson(Map<String, dynamic> json) =>
     VerifyRequest(
-      otp: json['otp'] as String?,
+      resetCode: json['resetCode'] as String?,
     );
 
 Map<String, dynamic> _$VerifyRequestToJson(VerifyRequest instance) =>
     <String, dynamic>{
-      'otp': instance.otp,
+      'resetCode': instance.resetCode,
     };

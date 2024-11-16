@@ -40,7 +40,7 @@ class AuthOnLineDataSourceImpl implements AuthOnLineDataSource {
 
   @override
   Future<Result<VerifyPasswordEntity?>> verifyPassword(String otp ) {
-    VerifyRequest requestOtp=VerifyRequest(otp: otp);
+    VerifyRequest requestOtp=VerifyRequest(resetCode: otp);
     return executeApi(() async {
       var response = await _authRetrofit.verifyPassword(requestOtp);
       return response.toVerifyPasswordEntity();

@@ -6,11 +6,11 @@ part 'verify_request.g.dart';
 
 class VerifyRequest {
   VerifyRequest({
-    this.otp,});
+    this.resetCode,});
 
   factory VerifyRequest.fromJson(Map<String, dynamic> json) => _$VerifyRequestFromJson(json);
 
-  String? otp;
+  String? resetCode;
 
   Map<String, dynamic> toJson() => _$VerifyRequestToJson(this);
 
