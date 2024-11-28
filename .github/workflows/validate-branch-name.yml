@@ -1,33 +1,29 @@
-name: Validate Branch Name
+name: Branch Name Validation
 
 on:
-  push:
-    branches:
-      - '*' # يطبق القاعدة على جميع الفروع
   pull_request:
     branches:
-      - '*' # يطبق القاعدة عند إنشاء PR من أي فرع
+      - '*'
 
 jobs:
   validate-branch-name:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Validate Branch Name
-      run: |
-        BRANCH_NAME=${{ github.ref_name }}
-        echo "Branch name: $BRANCH_NAME"
-        
-        # Define the regex pattern for valid branch names
-        REGEX="^(feature|bugfix|hotfix|release)/[a-z0-9._-]+$"
-        
-        if [[ ! "$BRANCH_NAME" =~ $REGEX ]]; then
-          echo "❌ Invalid branch name: $BRANCH_NAME"
-          echo "Branch names must follow the pattern: $REGEX"
-          exit 1
-        else
-          echo "✅ Branch name is valid."
-        fi
+      - name: Set script permissions
+        run: chmod +x ./.github/scripts/validate-branch-name.sh
+
+      - name: Get branch name
+        id: get_branch
+        run: |
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            BRANCH_NAME=${GITHUB_HEAD_REF}
+          else
+            BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          fi
+
+      - name: Validate Branch Name
+        run: ./.github/scripts/validate-branch-name.sh ${{ steps.get_branch.outputs.branch }}
