@@ -19,8 +19,8 @@ jobs:
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           echo "Branch name: $BRANCH_NAME"
-          if [[ ! "$BRANCH_NAME" =~ ^(bugfix|hotfix|release)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ ]]; then
+          if [[ ! "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|master|develop)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ && "$BRANCH_NAME" != "master" && "$BRANCH_NAME" != "develop" ]]; then
             echo "Error: Invalid branch name. It must follow the pattern: <branch-type>/<Ticket-Id>/<task-name>"
-            echo "Allowed prefixes: bugfix/, hotfix/, release/"
+            echo "Allowed prefixes: bugfix/, hotfix/, release/ and also 'master' and 'develop'."
             exit 1
           fi
