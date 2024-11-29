@@ -18,10 +18,11 @@ jobs:
       - name: Validate Branch Name
         id: validate_branch
         run: |
-          BRANCH_NAME="${GITHUB_REF##*/}"
+          # استخراج اسم الفرع من GITHUB_REF
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
           echo "Branch name: $BRANCH_NAME"
           
-          # التحقق من اسم الفرع بناءً على الشروط الجديدة
+          # التحقق من اسم الفرع باستخدام الـ regex
           if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
             echo "Branch name is valid: $BRANCH_NAME"
             echo "status=success" >> $GITHUB_ENV
