@@ -22,10 +22,10 @@ jobs:
           BRANCH_NAME="${GITHUB_REF#refs/heads/}"
           echo "Branch name: $BRANCH_NAME"
 
-          if [[ "$BRANCH_NAME" =~ ^(fix|release|bugfix|feature|hotfix|)/[A-Za-z0-9-]+-[0-9]+/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+          # التحقق من اسم الفرع باستخدام التعبير النمطي أو الفروع الخاصة
+          if [[ "$BRANCH_NAME" =~ ^(fix|release)/[A-Za-z0-9-]+-[0-9]+/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
             echo "Branch name is valid: $BRANCH_NAME"
-            exit 0
           else
             echo "Invalid branch name: $BRANCH_NAME"
-            exit 1
+            exit 1  # إنهاء الفحص في حالة الفرع غير صحيح
           fi
