@@ -20,8 +20,9 @@ jobs:
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           echo "Branch name: $BRANCH_NAME"
-          # استخدام regex للتحقق من اسم الفرع
-          if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|master|develop)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+          
+          # التحقق من اسم الفرع بناءً على الشروط
+          if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
             echo "Branch name is valid: $BRANCH_NAME"
             echo "status=success" >> $GITHUB_ENV
           else
@@ -29,7 +30,7 @@ jobs:
             echo "status=failure" >> $GITHUB_ENV
           fi
 
-      - name: Set GitHub Status
+      - name: Set GitHub Status (Failure)
         if: env.status == 'failure'
         run: |
           curl -X POST \
