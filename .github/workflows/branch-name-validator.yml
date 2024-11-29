@@ -16,11 +16,37 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Validate Branch Name
+        id: validate_branch
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           echo "Branch name: $BRANCH_NAME"
-          if [[ ! "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|master|develop)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ && "$BRANCH_NAME" != "master" && "$BRANCH_NAME" != "develop" ]]; then
-            echo "Error: Invalid branch name. It must follow the pattern: <branch-type>/<Ticket-Id>/<task-name>"
-            echo "Allowed prefixes: bugfix/, hotfix/, release/ and also 'master' and 'develop'."
-            exit 1
+          # استخدام regex للتحقق من اسم الفرع
+          if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|master|develop)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+            echo "Branch name is valid: $BRANCH_NAME"
+            echo "status=success" >> $GITHUB_ENV
+          else
+            echo "Invalid branch name: $BRANCH_NAME"
+            echo "status=failure" >> $GITHUB_ENV
           fi
+
+      - name: Set GitHub Status
+        if: env.status == 'failure'
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{
+              "state": "failure",
+              "context": "Branch Name Validation",
+              "description": "The branch name does not meet the required format."
+            }' "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}"
+
+      - name: Set GitHub Status (Success)
+        if: env.status == 'success'
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{
+              "state": "success",
+              "context": "Branch Name Validation",
+              "description": "The branch name is valid."
+            }' "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}"
