@@ -27,6 +27,6 @@ jobs:
             echo "Branch name is valid"
             exit 0
           else
-            echo "Invalid branch name"
+            echo "Invalid branch name: $BRANCH_NAME"
             exit 1
           fi
