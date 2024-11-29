@@ -1,29 +1,26 @@
-name: Branch Name Validation
+name: Validate Branch Name
 
 on:
+  push:
+    branches:
+      - '**'
   pull_request:
     branches:
-      - '*'
+      - '**'
 
 jobs:
-  validate-branch-name:
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set script permissions
-        run: chmod +x /.github/scripts/validate-branch-name.sh
-
-      - name: Get branch name
-        id: get_branch
-        run: |
-          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-            BRANCH_NAME=${GITHUB_HEAD_REF}
-          else
-            BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          fi
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
       - name: Validate Branch Name
-        run: /.github/scripts/validate-branch-name.sh ${{ steps.get_branch.outputs.branch }}
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          echo "Branch name: $BRANCH_NAME"
+          if [[ ! "$BRANCH_NAME" =~ ^(bugfix|hotfix|release)\/[A-Za-z0-9-]+-[0-9]+\/[A-Za-z0-9-]+$ ]]; then
+            echo "Error: Invalid branch name. It must follow the pattern: <branch-type>/<Ticket-Id>/<task-name>"
+            echo "Allowed prefixes: bugfix/, hotfix/, release/"
+            exit 1
+          fi
