@@ -23,7 +23,8 @@ jobs:
           echo "Branch name: $BRANCH_NAME"
 
           # التحقق من اسم الفرع باستخدام التعبير النمطي أو الفروع الخاصة
-          if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|feature)/[A-Za-z0-9-]+-[0-9]+/[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+          if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|feature)/[A-Za-z0-9-]+-[0-9]+-[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+
             echo "Branch name is valid: $BRANCH_NAME"
           else
             echo "Invalid branch name: $BRANCH_NAME"
