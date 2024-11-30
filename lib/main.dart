@@ -12,6 +12,7 @@ void main() {
   Bloc.observer = MyBlocObserver();
   configureDependencies();
   runApp(const FlowerApp());
+  //////////////
 }
 
 class FlowerApp extends StatelessWidget {
