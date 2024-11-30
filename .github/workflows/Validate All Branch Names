@@ -1,0 +1,43 @@
+name: Validate All Branch Names
+
+on:
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all branches
+
+      - name: Get All Branch Names
+        id: get_branches
+        run: |
+          git fetch --all
+          git branch -r | grep -v '\->' | awk '{print $1}' | sed 's/origin\///' > branches.txt
+          echo "Found branches:"
+          cat branches.txt
+
+      - name: Validate Branch Names
+        id: validate_branches
+        run: |
+          VALID=true
+          while IFS= read -r BRANCH_NAME; do
+            echo "Checking branch name: $BRANCH_NAME"
+            if [[ "$BRANCH_NAME" =~ ^(bugfix|hotfix|release|feature)/[A-Za-z0-9-]+-[0-9]+-[A-Za-z0-9-]+$ || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+              echo "Valid branch name: $BRANCH_NAME"
+            else
+              echo "Invalid branch name: $BRANCH_NAME"
+              VALID=false
+            fi
+          done < branches.txt
+
+          if [ "$VALID" = "false" ]; then
+            echo "Some branch names are invalid."
+            exit 1
+          else
+            echo "All branch names are valid."
+          fi
